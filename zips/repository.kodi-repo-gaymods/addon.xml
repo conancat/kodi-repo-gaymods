@@ -3,7 +3,7 @@
         <extension point="xbmc.addon.repository" name="Kodi Repo Gay Mods">
                 <info compressed="false">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml</info>
                 <checksum>https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml.md5</checksum>
-                <datadir zip="true">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/</datadir>
+		<datadir zip="true">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/zips/</datadir>
         </extension>
         <extension point="xbmc.addon.metadata">
                 <summary>Kodi Addons with tweaks to help get gay oriented content from many various sources and plugins. fork originally by agx</summary>

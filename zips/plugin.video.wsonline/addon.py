@@ -29,7 +29,7 @@ def index():
 
 @plugin.route('/latest')
 def latest():
-    url = 'http://watchseries-online.la/last-350-episodes'
+    url = 'http://watchseries-online.se/last-350-episodes'
     headers = {}
     headers.update({
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
@@ -38,7 +38,7 @@ def latest():
     headers.update({'Accept-Language': 'en-US,en;q=0.5'})
     req = urllib2.Request(url=url, data=None, headers=headers)
     html = str(urllib2.urlopen(req).read())
-    matches = re.compile(ur'href="(http...watchseries-online.la.episode.+?[^"])".+?</span>(.+?[^<])</a>',
+    matches = re.compile(ur'href="(http...watchseries-online.[a-z][a-z].episode.+?[^"])".+?</span>(.+?[^<])</a>',
                          re.DOTALL + re.S + re.U).findall(html)
     litems = []
     for eplink, epname in matches:
@@ -57,7 +57,7 @@ def search():
     searchtxt = plugin.keyboard(searchtxt, 'Search All Sites', False)
     searchquery = searchtxt.replace(' ', '+')
     plugin.set_setting(key='lastsearch', val=searchtxt)
-    urlsearch = 'http://watchseries-online.la/?s={0}&search='.format(searchquery)
+    urlsearch = 'http://watchseries-online.se/?s={0}&search='.format(searchquery)
     headers = {}
     headers.update({
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
@@ -68,7 +68,7 @@ def search():
     html = unicode(urllib2.urlopen(req).read())
     # html = unicode(download_page(urlsearch))
     htmlres = unicode(html.partition('<div class="ddmcc">')[2]).split('</div>', 1)[0]
-    matches = re.compile(ur'href="(http...watchseries-online.la.category.+?[^"])".+?[^>]>(.+?[^<])<.a>',
+    matches = re.compile(ur'href="(http...watchseries-online.[a-z][a-z].category.+?[^"])".+?[^>]>(.+?[^<])<.a>',
                          re.DOTALL + re.S + re.U).findall(unicode(htmlres))
     litems = []
     for slink, sname in matches:
@@ -76,7 +76,6 @@ def search():
         item = {'label': sname, 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': itempath}
         item.setdefault(item.keys()[0])
         litems.append(item)
-    litems.sort(key=lambda litems: litems['label'])
     return litems
 
 
@@ -93,11 +92,11 @@ def category(name, url):
     banner = None
     try:
         banner = str(html.split('id="banner_single"', 1)[0].rpartition('src="')[2].split('"', 1)[0])
-        if banner.startswith('/'): banner = 'http://watchseries-online.la' + banner
+        if banner.startswith('/'): banner = 'http://watchseries-online.se' + banner
     except:
         pass
     if banner is None: banner = 'DefaultVideoFolder.png'
-    matches = re.compile(ur"href='(http...watchseries-online.la.episode.+?[^'])'.+?</span>(.+?[^<])</a>",
+    matches = re.compile(ur"href='(http...watchseries-online.[a-z][a-z].episode.+?[^'])'.+?</span>(.+?[^<])</a>",
                          re.DOTALL + re.S + re.U).findall(html)
     litems = []
     for eplink, epname in matches:
@@ -122,7 +121,7 @@ def episode(name, url):
     html = str(urllib2.urlopen(req).read())
     litems = []
 
-    matches = re.compile(ur'href="(http...vodlocker.com.+?[^"])"', re.DOTALL + re.S + re.U).findall(html)
+    matches = re.compile(ur'href="(https?...vodlocker.com.+?[^"])"', re.DOTALL + re.S + re.U).findall(html)
     if len(matches) > 0:
         matches.sort()
         umatches = list(set(matches))
@@ -137,14 +136,14 @@ def episode(name, url):
         litem.set_is_playable(True)
         litems.append(item)
 
-    matches = re.compile(ur'href="(http...openload.co.+?mp4)"', re.DOTALL + re.S + re.U).findall(html)
+    matches = re.compile(ur'href="(https?...openload.co.+?mp4)"', re.DOTALL + re.S + re.U).findall(html)
     if len(matches) > 0:
         matches.sort()
         umatches = list(set(matches))
     for link in umatches:
-        lname = link.split('openload.co/f/', 1)[1]
+        lname = link.rpartition('/')[2]
         vid = lname.split('/', 1)[0]
-        vname = 'Openload ' + lname.rpartition('/')[2][:25] + '[COLOR green](' + vid + ')[/COLOR]'
+        vname = 'Openload ' + lname.rpartition('/')[2].split('.WEB', 1)[0] + '[COLOR green](' + vid + ')[/COLOR]'
         vpath = 'plugin://plugin.video.hubgay/playmovie/' + urllib.quote_plus(link)
         item = {'label': vname, 'icon': 'DefaultFolder.png', 'path': vpath}  # plugin.url_for(play, url=link)}
         item.setdefault(item.keys()[0])
